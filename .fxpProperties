@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="3c7a8308-1a64-49d9-82f8-f0b1023e922b" projectUUID="3c7a8308-1a64-49d9-82f8-f0b1023e922b" sdkVersion="3.5.0" uuid="678da08c-37cb-4eee-9d49-f2511ba1c074" version="4">
+  <projects/>
+  <src/>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="678da08c-37cb-4eee-9d49-f2511ba1c074"/>
+    <linked location="C:/Documents and Settings/Andre/Desktop/workspace/WordPressTeste/libs" path="/libs" position="1" uuid="548bbdde-31b4-45a0-8cdf-bc375853eafb"/>
+  </swc>
+  <misc/>
+  <theme/>
+</fxpProperties>

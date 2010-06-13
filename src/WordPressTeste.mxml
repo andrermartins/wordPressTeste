@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" minHeight="600"
+	minWidth="955"
+	creationComplete="init()">
+
+	<mx:Script>
+		<![CDATA[
+			import com.mattism.http.wordpress.WordPress;
+			import com.mattism.http.xmlrpc.MethodFault;
+			
+			import mx.controls.Alert;
+
+			private var USER_NAME:String = "admin";
+			private var PASSWORD:String = "admin";
+			private var SERVICE_URL:String = "http://localhost/xampp/wordpress/xmlrpc.php";
+
+			private var wp:WordPress = new WordPress(USER_NAME, PASSWORD, SERVICE_URL);
+			
+			[Bindable]
+			private var categorias:Array;
+
+			private function init():void
+			{
+				wp.blog_id = "andrermartins";
+			}
+			
+			private function btPost_clickHandler(e:MouseEvent):void
+			{
+				wp.newPost(title.text, content.text, resultNewPostHandler);
+			}
+			
+			private function btGetCategories_clickHandler(e:MouseEvent):void
+			{
+				wp.getCategories(resultGetCategoriesHandler);
+			}
+
+			private function resultNewPostHandler(result:Object):void
+			{
+				if (result is MethodFault)
+				{
+					faultHandler(MethodFault(result));
+				}
+				else
+				{
+					txtResult.text = result.toString();
+				}
+			}
+			
+			private function resultGetCategoriesHandler(result:Object):void
+			{
+				if (result is MethodFault)
+				{
+					faultHandler(MethodFault(result));
+				}
+				else
+				{
+					categorias = result as Array;
+				}
+			}
+			
+			private function faultHandler(fault:MethodFault):void
+			{
+				Alert.show(fault.getFaultCode() + " - " + fault.getFaultString());
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Form>
+		<mx:FormItem label="Título:">
+			<mx:TextInput id="title"/>
+		</mx:FormItem>
+		<mx:FormItem label="Conteúdo:">
+			<mx:TextArea id="content"/>
+		</mx:FormItem>
+	</mx:Form>
+
+	<mx:Button id="btPost" label="Post"
+		click="btPost_clickHandler(event)"/>
+	
+	<mx:Button id="btGetCategories" label="Obter categorias"
+			   click="btGetCategories_clickHandler(event)"/>
+	
+	<mx:Text id="txtResult" />
+	
+	<mx:List id="lstCategoria" dataProvider="{categorias}" labelField="categoryName" width="200" />
+
+</mx:Application>
