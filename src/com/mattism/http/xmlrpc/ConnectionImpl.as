@@ -59,7 +59,7 @@ package com.mattism.http.xmlrpc
 			this._response = new URLLoader();
 			this._response.addEventListener(Event.COMPLETE, this._onLoad);
 
-			if (url)
+			if(url)
 			{
 				this.setUrl(url);
 			}
@@ -73,7 +73,7 @@ package com.mattism.http.xmlrpc
 
 		private function _call(method:String):void
 		{
-			if (!this.getUrl())
+			if(!this.getUrl())
 			{
 				trace(ERROR_NO_URL);
 				throw Error(ERROR_NO_URL);
@@ -96,16 +96,21 @@ package com.mattism.http.xmlrpc
 
 		private function _onLoad(evt:Event):void
 		{
+			var responseXML:XML = XML(this._response.data);
 
-			var responseXML:XML = this._response.data as XML;
-
-			if (!responseXML)
+			try
+			{
+				responseXML = XML(this._response.data);
+			}
+			catch(erro:Error)
 			{
 				var xmlFault:Fault = new Fault("0", "Erro parse xml.");
 				_fault = new MethodFaultImpl(xmlFault);
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR));
+				trace(erro.message)
 			}
-			else if (responseXML.fault.length() > 0)
+
+			if(responseXML.fault.length() > 0)
 			{
 				// fault
 				var parsedFault:Object = parseResponse(responseXML.fault.value.*[0]);
@@ -114,7 +119,7 @@ package com.mattism.http.xmlrpc
 
 				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR));
 			}
-			else if (responseXML.params)
+			else if(responseXML.params)
 			{
 				_parsed_response = parseResponse(responseXML.params.param.value[0]);
 

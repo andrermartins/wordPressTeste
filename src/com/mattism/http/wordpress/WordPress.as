@@ -17,9 +17,12 @@
 	import com.mattism.http.xmlrpc.Connection;
 	import com.mattism.http.xmlrpc.ConnectionImpl;
 	import com.mattism.http.xmlrpc.util.XMLRPCDataTypes;
+	import com.mattism.http.xmlrpc.vo.Categoria;
 	
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	
+	import mx.collections.ArrayCollection;
 
 	public class WordPress
 	{
@@ -41,26 +44,36 @@
 		private var METHOD_EDIT_POST:String = "metaWeblog.editPost";
 		private var METHOD_GET_RECENT_POSTS:String = "metaWeblog.getRecentPosts";
 		private var METHOD_GET_CATEGORIES:String = "metaWeblog.getCategories";
-		
+
 		private var _callBackFunction:Function;
-		
+
 		private var _rpc:Connection;
-		
+
 		public function WordPress(username:String = "", password:String = "", serviceURL:String = ""):void
 		{
 			this.username = username;
 			this.password = password;
 			this.SERVICE_URL = serviceURL;
-			
+
 			_rpc = new ConnectionImpl(SERVICE_URL);
 			_rpc.addEventListener(Event.COMPLETE, rpcSuccessHandler);
 			_rpc.addEventListener(ErrorEvent.ERROR, rpcFaultHandler);
 		}
 
-		// Return post ID
-		public function newPost(title:String, content:String, callBackFunction:Function):void
+		public function newPost(title:String, content:String, callBackFunction:Function, categories:ArrayCollection = null):void
 		{
-			var args:Array = [[blog_id, XMLRPCDataTypes.STRING], [username, XMLRPCDataTypes.STRING], [password, XMLRPCDataTypes.STRING], [{title: title, description: content}, XMLRPCDataTypes.STRUCT], [true, XMLRPCDataTypes.BOOLEAN]];
+			var conteudo:Object = {title: title, description: content};
+
+			if(categories && categories.length > 0)
+			{
+				for each(i < categories.length)
+				{
+					conteudo.categories = conteudo + ", " + Categoria(categories[i]).categoryId.toString();
+					i++;
+				}
+			}
+
+			var args:Array = [[blog_id, XMLRPCDataTypes.STRING], [username, XMLRPCDataTypes.STRING], [password, XMLRPCDataTypes.STRING], [conteudo, XMLRPCDataTypes.STRUCT], [true, XMLRPCDataTypes.BOOLEAN]];
 
 			this._wpCall(METHOD_NEW_POST, args, callBackFunction);
 		}
@@ -89,11 +102,11 @@
 
 			this._wpCall(METHOD_GET_RECENT_POSTS, args);
 		}
-		
+
 		public function getCategories(callBackFunction:Function):void
 		{
 			var args:Array = [[blog_id, XMLRPCDataTypes.STRING], [username, XMLRPCDataTypes.STRING], [password, XMLRPCDataTypes.STRING]];
-			
+
 			this._wpCall(METHOD_GET_CATEGORIES, args, callBackFunction);
 		}
 
@@ -101,26 +114,27 @@
 		{
 			_callBackFunction = callBackFunction;
 			_rpc.removeParams();
-			
+
 			var i:Number;
-			for (i = 0; i < args.length; i++)
+
+			for(i = 0; i < args.length; i++)
 			{
 				_rpc.addParam(args[i][0], args[i][1]);
 			}
 			_rpc.call(method);
 		}
-		
+
 		private function rpcSuccessHandler(e:Event):void
 		{
-			if (_callBackFunction != null)
+			if(_callBackFunction != null)
 			{
 				_callBackFunction(_rpc.getResponse());
 			}
 		}
-		
+
 		private function rpcFaultHandler(e:ErrorEvent):void
 		{
-			if (_callBackFunction != null)
+			if(_callBackFunction != null)
 			{
 				_callBackFunction(_rpc.getFault());
 			}

@@ -37,7 +37,7 @@ package com.mattism.http.xmlrpc
 
 		public function parse(xml:XML):Object
 		{
-			if (xml.toString().toLowerCase().indexOf('<html') >= 0)
+			if(xml.toString().toLowerCase().indexOf('<html') >= 0)
 			{
 				trace("WARNING: XML-RPC Response looks like an html page.");
 				return xml.toString();
@@ -51,24 +51,25 @@ package com.mattism.http.xmlrpc
 			var data:Object;
 			var i:int;
 
-			if (node.nodeKind() == 'text')
+			if(node.nodeKind() == 'text')
 			{
 				return node.*;
 			}
-			else if (node.nodeKind() == 'element')
+			else if(node.nodeKind() == 'element')
 			{
 
-				if (node.name() == METHOD_RESPONSE_NODE || node.name() == PARAMS_NODE || node.name() == VALUE_NODE || node.name() == PARAM_NODE || node.name() == FAULT_NODE || node.name() == ARRAY_NODE)
+				if(node.name() == METHOD_RESPONSE_NODE || node.name() == PARAMS_NODE || node.name() == VALUE_NODE || node.name() == PARAM_NODE || node.name() == FAULT_NODE || node.name() == ARRAY_NODE)
 				{
 
 					this.debug("_parse(): >> " + node.name());
 					return this._parse(node.*[0]);
 				}
-				else if (node.name() == DATA_NODE)
+				else if(node.name() == DATA_NODE)
 				{
 					this.debug("_parse(): >> Begin Array");
 					data = new Array();
-					for (i = 0; i < node.children().length(); i++)
+
+					for(i = 0; i < node.children().length(); i++)
 					{
 						data.push(this._parse(node.children()[i]));
 						this.debug("_parse(): adding data to array: " + data[data.length - 1]);
@@ -76,11 +77,12 @@ package com.mattism.http.xmlrpc
 					this.debug("_parse(): << End Array");
 					return data;
 				}
-				else if (node.name() == STRUCT_NODE)
+				else if(node.name() == STRUCT_NODE)
 				{
 					this.debug("_parse(): >> Begin Struct");
 					data = new Object();
-					for (i = 0; i < node.children().length(); i++)
+
+					for(i = 0; i < node.children().length(); i++)
 					{
 						var temp:Object = this._parse(node.children()[i]);
 						data[temp.name] = temp.value;
@@ -89,7 +91,7 @@ package com.mattism.http.xmlrpc
 					this.debug("_parse(): << End Stuct");
 					return data;
 				}
-				else if (node.name() == MEMBER_NODE)
+				else if(node.name() == MEMBER_NODE)
 				{
 					/*
 					 * The member tag is *special*. The returned
@@ -102,11 +104,11 @@ package com.mattism.http.xmlrpc
 
 					return data;
 				}
-				else if (node.name() == "name")
+				else if(node.name() == "name")
 				{
 					return this._parse(node.*[0]);
 				}
-				else if (XMLRPCUtils.isSimpleType(node.name()))
+				else if(XMLRPCUtils.isSimpleType(node.name()))
 				{
 					return this.createSimpleType(node.name(), node.*);
 				}
@@ -118,7 +120,7 @@ package com.mattism.http.xmlrpc
 
 		private function createSimpleType(type:String, value:String):Object
 		{
-			switch (type)
+			switch(type)
 			{
 				case XMLRPCDataTypes.i4:
 				case XMLRPCDataTypes.INT:
@@ -143,11 +145,12 @@ package com.mattism.http.xmlrpc
 					break;
 
 				case XMLRPCDataTypes.BOOLEAN:
-					if (value == "1" || value.toLowerCase() == "true")
+
+					if(value == "1" || value.toLowerCase() == "true")
 					{
 						return new Boolean(true);
 					}
-					else if (value == "0" || value.toLowerCase() == "false")
+					else if(value == "0" || value.toLowerCase() == "false")
 					{
 						return new Boolean(false);
 					}
