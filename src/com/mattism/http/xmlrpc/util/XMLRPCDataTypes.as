@@ -15,6 +15,7 @@ package com.mattism.http.xmlrpc.util
 
 		public static var STRING:String = "string";
 		public static var CDATA:String = "cdata";
+		public static var DATA:String = "data";
 		public static var i4:String = "i4";
 		public static var INT:String = "int";
 		public static var BOOLEAN:String = "boolean";
@@ -23,7 +24,6 @@ package com.mattism.http.xmlrpc.util
 		public static var BASE64:String = "base64";
 		public static var STRUCT:String = "struct";
 		public static var ARRAY:String = "array";
-
 	}
 }
 

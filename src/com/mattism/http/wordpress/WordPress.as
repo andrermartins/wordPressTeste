@@ -62,16 +62,8 @@
 
 		public function newPost(title:String, content:String, callBackFunction:Function, categories:ArrayCollection = null):void
 		{
-			var conteudo:Object = {title: title, description: content};
-
-			if(categories && categories.length > 0)
-			{
-				for each(i < categories.length)
-				{
-					conteudo.categories = conteudo + ", " + Categoria(categories[i]).categoryId.toString();
-					i++;
-				}
-			}
+			//var array:Object = { ["Flex", "Text"], XMLRPCDataTypes.ARRAY };
+			var conteudo:Object = {title: title, description: content, category: ["Flex", "Text"]};
 
 			var args:Array = [[blog_id, XMLRPCDataTypes.STRING], [username, XMLRPCDataTypes.STRING], [password, XMLRPCDataTypes.STRING], [conteudo, XMLRPCDataTypes.STRUCT], [true, XMLRPCDataTypes.BOOLEAN]];
 
