@@ -1,5 +1,0 @@
-<?xml version="1.0″ encoding="UTF-8" ?>
-<cross-domain-policy>
-    <allow-access-from domain="*" />
-    <allow-access-from domain="localhost" />
-</cross-domain-policy>

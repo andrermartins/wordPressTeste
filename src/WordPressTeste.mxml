@@ -7,17 +7,22 @@
 		<![CDATA[
 			import com.mattism.http.wordpress.WordPress;
 			import com.mattism.http.xmlrpc.MethodFault;
+			import com.mattism.http.xmlrpc.vo.Categoria;
 
+			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 
-			private var USER_NAME:String = "andrermartins";
-			private var PASSWORD:String = "Capicuias";
-			private var SERVICE_URL:String = "https://andrermartins.wordpress.com/xmlrpc.php";
+			private var USER_NAME:String = "admin";
+			private var PASSWORD:String = "admin";
+			private var SERVICE_URL:String = "http://localhost/xampp/wordpress/xmlrpc.php";
+
+			//http://www.xml.com/2003/10/15/examples/metaweblog-example-request.txt
+			//http://www.ibm.com/developerworks/xml/library/x-metablog/index.html
 
 			private var wp:WordPress = new WordPress(USER_NAME, PASSWORD, SERVICE_URL);
 
 			[Bindable]
-			private var categorias:Array;
+			private var categoriasDisponiveis:Array;
 
 			private function init():void
 			{
@@ -26,7 +31,8 @@
 
 			private function btPost_clickHandler(e:MouseEvent):void
 			{
-				wp.newPost(title.text, content.text, resultNewPostHandler);
+				var categories:ArrayCollection = lstCategoriasIncluidas.dataProvider as ArrayCollection;
+				wp.newPost(title.text, content.text, resultNewPostHandler, categories);
 			}
 
 			private function btGetCategories_clickHandler(e:MouseEvent):void
@@ -54,13 +60,30 @@
 				}
 				else
 				{
-					categorias = result as Array;
+					categoriasDisponiveis = result as Array;
+					for (var i:int = 0; i < categoriasDisponiveis.length; i++)
+					{
+						categoriasDisponiveis[i] = new Categoria(categoriasDisponiveis[i]);
+					}
+					lstCategoriasIncluidas.dataProvider = null;
 				}
 			}
 
 			private function faultHandler(fault:MethodFault):void
 			{
 				Alert.show(fault.getFaultCode() + " - " + fault.getFaultString());
+			}
+
+			protected function btTeste_clickHandler(event:MouseEvent):void
+			{
+				var request:URLRequest = new URLRequest();
+				request.contentType = 'text/xml';
+				request.data = txtTeste.text;
+				request.method = URLRequestMethod.POST;
+				request.url = "http://localhost/xampp/wordpress/xmlrpc.php";
+
+				var _response:URLLoader = new URLLoader();
+				_response.load(request);
 			}
 		]]>
 	</mx:Script>
@@ -80,8 +103,17 @@
 	<mx:Button id="btGetCategories" label="Obter categorias"
 		click="btGetCategories_clickHandler(event)"/>
 
+	<mx:Button id="btTeste" click="btTeste_clickHandler(event)"/>
+
 	<mx:Text id="txtResult"/>
 
-	<mx:List id="lstCategoria" dataProvider="{categorias}" labelField="categoryName" width="200"/>
+	<mx:List id="lstCategoriasDisponiveis" dataProvider="{categoriasDisponiveis}"
+		labelField="categoryName" width="200"
+		dropEnabled="true" dragMoveEnabled="true" dragEnabled="true"/>
+
+	<mx:List id="lstCategoriasIncluidas" labelField="categoryName" width="200"
+		dropEnabled="true" dragMoveEnabled="true" dragEnabled="true"/>
+
+	<mx:TextArea id="txtTeste" height="100%" width="400"/>
 
 </mx:Application>
