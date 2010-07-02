@@ -1,0 +1,5 @@
+Dicas GIT
+
+Para fazer revert em um arquivo específico:
+
+git checkout HEAD hello.rb
