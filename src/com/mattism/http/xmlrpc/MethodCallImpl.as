@@ -9,9 +9,11 @@
 
 package com.mattism.http.xmlrpc
 {
-	import com.mattism.http.xmlrpc.util.XMLRPCUtils;
-	import com.mattism.http.xmlrpc.util.XMLRPCDataTypes;
 	import com.mattism.http.xmlrpc.MethodCall;
+	import com.mattism.http.xmlrpc.util.XMLRPCDataTypes;
+	import com.mattism.http.xmlrpc.util.XMLRPCUtils;
+
+	import mx.collections.ListCollectionView;
 
 	public class MethodCallImpl implements MethodCall
 	{
@@ -72,7 +74,7 @@ package com.mattism.http.xmlrpc
 
 			var i:Number;
 
-			for(i = 0; i < this._parameters.length; i++)
+			for (i = 0; i < this._parameters.length; i++)
 			{
 				this.debug("PARAM: " + [this._parameters[i].type, this._parameters[i].value]);
 				ChildNode = <param />;
@@ -92,30 +94,30 @@ package com.mattism.http.xmlrpc
 			var Node:XML = <value />;
 			var TypeNode:XML;
 
-			if(!parameter.value && parameter)
+			if (!parameter.value && parameter)
 			{
 				parameter = {value: parameter};
 			}
 
-			if(typeof parameter == "object")
+			if (typeof parameter == "object")
 			{
 
 
 				// Default to 
-				if(!parameter.type)
+				if (!parameter.type)
 				{
 					var v:Object = parameter.value;
 
-					if(v is Array)
+					if (v is Array)
 						parameter.type = XMLRPCDataTypes.ARRAY;
-					else if(v is Object)
-						parameter.type = XMLRPCDataTypes.STRUCT;
-					else
+					else if (v is String)
 						parameter.type = XMLRPCDataTypes.STRING;
+					else
+						parameter.type = XMLRPCDataTypes.STRUCT;
 				}
 
 				// Handle Explicit Simple Objects
-				if(XMLRPCUtils.isSimpleType(parameter.type))
+				if (XMLRPCUtils.isSimpleType(parameter.type))
 				{
 					//cdata is really a string type with a cdata wrapper, so don't really make a 'cdata' tag
 					parameter = this.fixCDATAParameter(parameter);
@@ -127,7 +129,7 @@ package com.mattism.http.xmlrpc
 				}
 
 				// Handle Array Objects
-				if(parameter.type == XMLRPCDataTypes.ARRAY)
+				if (parameter.type == XMLRPCDataTypes.ARRAY)
 				{
 					var DataNode:XML;
 					this.debug("CreateParameterNode(): >> Begin Array");
@@ -137,7 +139,7 @@ package com.mattism.http.xmlrpc
 					//for (var i:String in parameter.value) {
 					//	DataNode.appendChild(this.createParamsNode(parameter.value[i]));
 					//}
-					for(var i:int = 0; i < parameter.value.length; i++)
+					for (var i:int = 0; i < parameter.value.length; i++)
 					{
 						DataNode.appendChild(this.createParamsNode(parameter.value[i]));
 					}
@@ -148,20 +150,31 @@ package com.mattism.http.xmlrpc
 				}
 
 				// Handle Struct Objects
-				if(parameter.type == XMLRPCDataTypes.STRUCT)
+				if (parameter.type == XMLRPCDataTypes.STRUCT)
 				{
 					this.debug("CreateParameterNode(): >> Begin struct");
 					TypeNode = <struct />;
 
-					for(var x:String in parameter.value)
+					for (var x:String in parameter.value)
 					{
 						var MemberNode:XML = <member />;
 
 						// add name node
 						MemberNode.appendChild(<name>{x}</name>);
 
-						// add value node
-						MemberNode.appendChild(<value>{parameter.value[x]}</value>);
+						// if value is category
+						if (parameter.value[x] is Array)
+						{
+							var arrayParamter:Object = new Object();
+							arrayParamter.type = XMLRPCDataTypes.ARRAY;
+							arrayParamter.value = parameter.value[x];
+							MemberNode.appendChild(this.createParamsNode(arrayParamter));
+						}
+						else
+						{
+							// add value node
+							MemberNode.appendChild(<value>{parameter.value[x]}</value>);
+						}
 
 						TypeNode.appendChild(MemberNode);
 					}
@@ -184,7 +197,7 @@ package com.mattism.http.xmlrpc
 		 ///////////////////////////////////////////////////////*/
 		private function fixCDATAParameter(parameter:Object):Object
 		{
-			if(parameter.type == XMLRPCDataTypes.CDATA)
+			if (parameter.type == XMLRPCDataTypes.CDATA)
 			{
 				parameter.type = XMLRPCDataTypes.STRING;
 				parameter.value = '<![CDATA[' + parameter.value + ']]>';

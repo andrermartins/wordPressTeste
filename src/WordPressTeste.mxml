@@ -80,7 +80,7 @@
 				request.contentType = 'text/xml';
 				request.data = txtTeste.text;
 				request.method = URLRequestMethod.POST;
-				request.url = "http://localhost/xampp/wordpress/xmlrpc.php";
+				request.url = SERVICE_URL;
 
 				var _response:URLLoader = new URLLoader();
 				_response.load(request);
@@ -103,7 +103,8 @@
 	<mx:Button id="btGetCategories" label="Obter categorias"
 		click="btGetCategories_clickHandler(event)"/>
 
-	<mx:Button id="btTeste" click="btTeste_clickHandler(event)"/>
+	<mx:Button id="btTeste" label="teste post categoria"
+		click="btTeste_clickHandler(event)"/>
 
 	<mx:Text id="txtResult"/>
 

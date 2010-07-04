@@ -11,7 +11,7 @@ package com.mattism.http.xmlrpc.vo
 		public var htmlUrl:String;
 		public var parentId:Number;
 		public var rssUrl:String;
-		
+
 		public function Categoria(obj:Object)
 		{
 			try
@@ -24,7 +24,7 @@ package com.mattism.http.xmlrpc.vo
 				parentId = obj.parentId;
 				rssUrl = obj.rssUrl;
 			}
-			catch(erro:Error)
+			catch (erro:Error)
 			{
 				trace(erro.message)
 			}

@@ -18,10 +18,10 @@
 	import com.mattism.http.xmlrpc.ConnectionImpl;
 	import com.mattism.http.xmlrpc.util.XMLRPCDataTypes;
 	import com.mattism.http.xmlrpc.vo.Categoria;
-	
+
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
-	
+
 	import mx.collections.ArrayCollection;
 
 	public class WordPress
@@ -62,8 +62,13 @@
 
 		public function newPost(title:String, content:String, callBackFunction:Function, categories:ArrayCollection = null):void
 		{
-			//var array:Object = { ["Flex", "Text"], XMLRPCDataTypes.ARRAY };
-			var conteudo:Object = {title: title, description: content, category: ["Flex", "Text"]};
+			var categoriesArray:Array = [];
+			for each (var category:Categoria in categories)
+			{
+				categoriesArray.push({value: category.categoryName});
+			}
+
+			var conteudo:Object = {title: title, description: content, categories: categoriesArray};
 
 			var args:Array = [[blog_id, XMLRPCDataTypes.STRING], [username, XMLRPCDataTypes.STRING], [password, XMLRPCDataTypes.STRING], [conteudo, XMLRPCDataTypes.STRUCT], [true, XMLRPCDataTypes.BOOLEAN]];
 
@@ -109,7 +114,7 @@
 
 			var i:Number;
 
-			for(i = 0; i < args.length; i++)
+			for (i = 0; i < args.length; i++)
 			{
 				_rpc.addParam(args[i][0], args[i][1]);
 			}
@@ -118,7 +123,7 @@
 
 		private function rpcSuccessHandler(e:Event):void
 		{
-			if(_callBackFunction != null)
+			if (_callBackFunction != null)
 			{
 				_callBackFunction(_rpc.getResponse());
 			}
@@ -126,7 +131,7 @@
 
 		private function rpcFaultHandler(e:ErrorEvent):void
 		{
-			if(_callBackFunction != null)
+			if (_callBackFunction != null)
 			{
 				_callBackFunction(_rpc.getFault());
 			}

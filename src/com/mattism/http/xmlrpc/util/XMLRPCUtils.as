@@ -19,9 +19,9 @@ package com.mattism.http.xmlrpc.util
 		{
 			var i:Number;
 
-			for(i = 0; i < SIMPLE_TYPES.length; i++)
+			for (i = 0; i < SIMPLE_TYPES.length; i++)
 			{
-				if(type == SIMPLE_TYPES[i])
+				if (type == SIMPLE_TYPES[i])
 				{
 					return true;
 				}
