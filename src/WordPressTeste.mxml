@@ -12,9 +12,9 @@
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 
-			private var USER_NAME:String = "andrermartins";
-			private var PASSWORD:String = "Capicuias";
-			private var SERVICE_URL:String = "https://andrermartins.wordpress.com/xmlrpc.php";
+			private var USER_NAME:String = "admin";
+			private var PASSWORD:String = "admin";
+			private var SERVICE_URL:String = "http://localhost/xampp/wordpress/xmlrpc.php";
 
 			//http://www.xml.com/2003/10/15/examples/metaweblog-example-request.txt
 			//http://www.ibm.com/developerworks/xml/library/x-metablog/index.html
